@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  name          String?
+  email         String?         @unique
+  password      String?         // Hashed password
+  phone         String?
+  emailVerified DateTime?
+  image         String?
+  role          String          @default("USER") // "USER", "MEMBER", "ADMIN"
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  memberProfile MemberProfile?
+  memberships   Membership[]
+  payments      Payment[]
+  adminLogs     AdminActionLog[] @relation("AdminLogs")
+}
+
+model MemberProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth      DateTime?
+  gender           String?
+  emergencyContact String?
+  address          String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model MembershipPlan {
+  id          String   @id @default(uuid())
+  name        String
+  durationDays Int
+  price       Float
+  description String?
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  features    PlanFeature[]
+  memberships Membership[]
+  payments    Payment[]
+}
+
+model PlanFeature {
+  id     String @id @default(uuid())
+  name   String
+  planId String
+  plan   MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+}
+
+model Membership {
+  id          String           @id @default(uuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId      String
+  plan        MembershipPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  startDate   DateTime
+  endDate     DateTime
+  status      String           @default("ACTIVE") // "ACTIVE", "EXPIRED", "CANCELLED"
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  payments    Payment[]
+}
+
+model Payment {
+  id              String         @id @default(uuid())
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membershipId    String?
+  membership      Membership?    @relation(fields: [membershipId], references: [id], onDelete: SetNull)
+  planId          String?
+  plan            MembershipPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  
+  razorpayOrderId   String?      @unique
+  razorpayPaymentId String?      @unique
+  razorpaySignature String?
+  
+  amount          Float
+  currency        String         @default("INR")
+  status          String         @default("CREATED") // "CREATED", "SUCCESS", "FAILED"
+  paymentMethod   String?        // "RAZORPAY", "CASH", "UPI", etc (Offline)
+  paymentDate     DateTime?
+  isOffline       Boolean        @default(false)
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Enquiry {
+  id             String   @id @default(uuid())
+  name           String
+  email          String
+  phone          String
+  message        String
+  interestedPlan String?
+  isContacted    Boolean  @default(false)
+  isResolved     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Trainer {
+  id             String   @id @default(uuid())
+  name           String
+  specialization String
+  experience     String
+  bio            String?
+  imageUrl       String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Facility {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  icon        String?  // Can store Lucide icon name
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GalleryImage {
+  id          String   @id @default(uuid())
+  title       String?
+  category    String   @default("Gym")
+  imageUrl    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  name        String
+  content     String
+  rating      Int      @default(5)
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FAQ {
+  id          String   @id @default(uuid())
+  question    String
+  answer      String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GymSettings {
+  id                  String   @id @default("singleton") // Only one record should exist
+  gymName             String   @default("Paradise Gym")
+  ownerName           String   @default("Siddharth Meena")
+  phone               String?
+  whatsappNumber      String?
+  email               String?
+  address             String   @default("Sitapura, Jaipur, Rajasthan, India")
+  googleMapsUrl       String?
+  instagramUrl        String?
+  facebookUrl         String?
+  youtubeUrl          String?
+  heroHeading         String   @default("Train Hard. Stay Strong. Be Your Best.")
+  heroDescription     String?
+  aboutText           String?
+  timings             String?
+  logoUrl             String?
+  updatedAt           DateTime @updatedAt
+}
+
+model AdminActionLog {
+  id          String   @id @default(uuid())
+  adminId     String
+  admin       User     @relation("AdminLogs", fields: [adminId], references: [id], onDelete: Cascade)
+  action      String   // e.g. "CREATED_MEMBERSHIP"
+  entity      String   // e.g. "Membership"
+  entityId    String
+  details     String?  // JSON stringified details
+  createdAt   DateTime @default(now())
+}
