@@ -75,6 +75,86 @@ async function main() {
     }
   }
 
+  // Seed Facilities
+  const facilities = [
+    {
+      title: "Olympic Free Weights & Heavy Lifting Arena",
+      description: "Equipped with competition-spec Olympic barbells, rubber bumper plates, power racks, deadlift platforms, and dumbbells ranging up to 50kg for intense hypertrophy and powerlifting.",
+      icon: "Dumbbell",
+      imageUrl: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "Advanced Cardio Theatre",
+      description: "State-of-the-art interactive commercial treadmills, stair climbers, rowing machines, and assault bikes equipped with heart rate biometric tracking and HIIT programs.",
+      icon: "Activity",
+      imageUrl: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "CrossFit & Functional Training Arena",
+      description: "A wide high-density turf zone with heavy sled push tracks, battle ropes, plyometric jump boxes, gymnastics rings, medicine balls, and kettlebell racks.",
+      icon: "Flame",
+      imageUrl: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "Pin & Plate-Loaded Machine Circuit",
+      description: "Biomechanical isolateral machines targeting chest, back, shoulders, arms, and legs safely with smooth pulley action and premium ergonomic cushions.",
+      icon: "Layers",
+      imageUrl: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "Calisthenics & Mobility Studio",
+      description: "Dedicated cushioned flooring area for bodyweight calisthenics, pull-up rigs, Swedish ladders, resistance bands, yoga mats, and recovery foam rollers.",
+      icon: "Maximize2",
+      imageUrl: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "Steam Bath & Hydro-Therapy Showers",
+      description: "Relaxing eucalyptus-infused steam chambers and temperature-controlled power showers designed for rapid post-workout muscle rejuvenation and stress relief.",
+      icon: "Sparkles",
+      imageUrl: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "Biometric Smart Lockers & Changing Lounges",
+      description: "Keyless secure digital RFID lockers, full-length vanity mirrors, modern grooming stations, and hygienic private changing suites.",
+      icon: "ShieldCheck",
+      imageUrl: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "Paradise Nutrition & Protein Shake Bar",
+      description: "Refuel right after your workout with custom whey protein smoothies, BCAAs, pre-workout energizers, hydration electrolytes, and healthy meal preps.",
+      icon: "Coffee",
+      imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+    {
+      title: "1-on-1 Personal Training & Biometrics Lab",
+      description: "Private consultations, comprehensive InBody body composition analysis (BMI, muscle mass, body fat percentage), and customized programming by certified master trainers.",
+      icon: "Trophy",
+      imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1200&auto=format&fit=crop",
+      isActive: true,
+    },
+  ]
+
+  for (const facility of facilities) {
+    const existing = await prisma.facility.findFirst({
+      where: { title: facility.title },
+    })
+
+    if (!existing) {
+      await prisma.facility.create({
+        data: facility,
+      })
+      console.log(`Created facility: ${facility.title}`)
+    }
+  }
+
   console.log('Seeding finished.')
 }
 

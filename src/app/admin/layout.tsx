@@ -12,7 +12,8 @@ import {
   MessageSquare,
   Image as ImageIcon,
   HelpCircle,
-  Activity
+  Activity,
+  Dumbbell
 } from "lucide-react"
 import { logoutAction } from "@/app/actions/auth"
 
@@ -31,6 +32,7 @@ export default async function AdminLayout({
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Members", href: "/admin/members", icon: Users },
     { name: "Plans", href: "/admin/plans", icon: CreditCard },
+    { name: "Facilities", href: "/admin/facilities", icon: Dumbbell },
     { name: "Payments", href: "/admin/payments", icon: History },
     { name: "Enquiries", href: "/admin/enquiries", icon: MessageSquare },
     { name: "Trainers", href: "/admin/trainers", icon: Activity },

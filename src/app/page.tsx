@@ -81,6 +81,14 @@ export default async function Home() {
               </Card>
             ))}
           </div>
+
+          <div className="text-center mt-12">
+            <Link href="/facilities">
+              <Button size="lg" variant="outline" className="uppercase font-semibold tracking-wide">
+                Explore All Facilities & Amenities
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
